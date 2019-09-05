@@ -56,7 +56,6 @@ namespace SteamInviteHelper_ASF
                 return null;
 
             userProfile.steamId64 = steamId64;
-
             using (dynamic steamUser = WebAPI.GetInterface("ISteamUser", steamApiKey))
             {
                 KeyValue kvUserSummaries = steamUser.GetPlayerSummaries(steamids: steamId64.ToString())["players"]["player"].Children[0];

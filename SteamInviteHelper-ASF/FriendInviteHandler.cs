@@ -91,7 +91,11 @@ namespace SteamInviteHelper_ASF
 
         private static async Task<Action> processSteamRepScammerAsync(UserProfile userProfile, Bot bot)
         {
-            if (await WebRequestsHelper.StreamRepIsScammer(userProfile.steamId64))
+            WebBrowser wb = bot.ArchiWebHandler.WebBrowser;
+            string url = "http://steamrep.com/id2rep.php?steamID32=" + new SteamID(userProfile.steamId64).Render();
+            string result = (await wb.UrlGetToHtmlDocument(url)).Content.Text;
+
+            if (result.Contains("SCAMMER"))
             {
                 return new Action(Config.FriendInviteConfigs.GetOrAdd(bot, new Config(bot)).SteamRepScammer, "SteamRep scammer");
             }
