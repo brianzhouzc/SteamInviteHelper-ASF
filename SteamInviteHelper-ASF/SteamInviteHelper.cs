@@ -14,7 +14,7 @@ namespace SteamInviteHelper_ASF
 {
     [Export(typeof(IPlugin))]
 
-    internal sealed class SteamInviteHelper : IASF, IBot, IBotCommand, IBotConnection, IBotFriendRequest, IBotMessage, IBotModules, IBotSteamClient
+    internal sealed class SteamInviteHelper : IASF, IBot, IBotConnection, IBotFriendRequest, IBotModules, IBotSteamClient
 
     {
         private static ConcurrentDictionary<Bot, FriendInviteHandler> FriendInviteHandlers = new ConcurrentDictionary<Bot, FriendInviteHandler>();
@@ -30,8 +30,6 @@ namespace SteamInviteHelper_ASF
                 return;
             }
         }
-
-        public Task<string> OnBotCommand(Bot bot, ulong steamID, string message, string[] args) { return null; }
 
         public void OnBotDestroy(Bot bot) { }
 
@@ -50,11 +48,6 @@ namespace SteamInviteHelper_ASF
         public void OnBotLoggedOn(Bot bot)
         {
             Config.FriendInviteConfigs.TryAdd(bot, new Config(bot));
-        }
-
-        public Task<string> OnBotMessage(Bot bot, ulong steamID, string message)
-        {
-            return null;
         }
 
         public void OnBotSteamCallbacksInit(Bot bot, CallbackManager callbackManager) { }
