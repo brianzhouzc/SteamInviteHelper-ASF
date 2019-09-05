@@ -39,11 +39,6 @@ namespace SteamInviteHelper_ASF
 
         public Task<bool> OnBotFriendRequest(Bot bot, ulong steamID)
         {
-            while (!UserProfile.WebAPIKeys.ContainsKey(bot))
-            {
-                Thread.Sleep(1000);
-            }
-
             FriendInviteHandlers.GetOrAdd(bot, new FriendInviteHandler()).processFriendRequest(steamID, bot);
             return Task.FromResult(false);
         }

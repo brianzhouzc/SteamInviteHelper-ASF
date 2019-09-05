@@ -8,8 +8,6 @@ namespace SteamInviteHelper_ASF
 {
     class UserProfile
     {
-        public static ConcurrentDictionary<Bot, string> WebAPIKeys = new ConcurrentDictionary<Bot, string>();
-
         public ulong steamId64 { get; set; }
 
         public string profileUrl { get; set; }
