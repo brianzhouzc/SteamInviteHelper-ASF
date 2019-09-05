@@ -1,4 +1,5 @@
 # SteamInviteHelper-ASF
+![](https://raw.githubusercontent.com/1461748123/SteamInviteHelper-ASF/master/screenshot.png)
 ## Introduction
 This plugin allow you to set rules and actions for your incoming friend invites. The bot can automatically block, ignore or accept the incoming friend invites base on the set rules.
 
