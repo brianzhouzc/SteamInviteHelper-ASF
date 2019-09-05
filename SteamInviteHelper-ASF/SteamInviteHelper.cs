@@ -31,20 +31,13 @@ namespace SteamInviteHelper_ASF
             }
         }
 
-        public Task<string> OnBotCommand([NotNull] Bot bot, ulong steamID, [NotNull] string message, [ItemNotNull, NotNull] string[] args)
-        {
-            return null;
-        }
+        public Task<string> OnBotCommand(Bot bot, ulong steamID, string message, string[] args){ return null; }
 
-        public void OnBotDestroy([NotNull] Bot bot)
-        {
-        }
+        public void OnBotDestroy(Bot bot){ }
 
-        public void OnBotDisconnected([NotNull] Bot bot, EResult reason)
-        {
-        }
+        public void OnBotDisconnected(Bot bot, EResult reason){ }
 
-        public Task<bool> OnBotFriendRequest([NotNull] Bot bot, ulong steamID)
+        public Task<bool> OnBotFriendRequest(Bot bot, ulong steamID)
         {
             while (!UserProfile.WebAPIKeys.ContainsKey(bot))
             {
@@ -55,9 +48,7 @@ namespace SteamInviteHelper_ASF
             return Task.FromResult(false);
         }
 
-        public void OnBotInit([NotNull] Bot bot)
-        {
-        }
+        public void OnBotInit(Bot bot){ }
 
         public async void OnBotInitModules(Bot bot, IReadOnlyDictionary<string, JToken> additionalConfigProperties = null)
         {
@@ -70,14 +61,12 @@ namespace SteamInviteHelper_ASF
             Config.FriendInviteConfigs.TryAdd(bot, new Config(bot));
         }
 
-        public Task<string> OnBotMessage([NotNull] Bot bot, ulong steamID, [NotNull] string message)
+        public Task<string> OnBotMessage(Bot bot, ulong steamID, string message)
         {
             return null;
         }
 
-        public void OnBotSteamCallbacksInit([NotNull] Bot bot, [NotNull] CallbackManager callbackManager)
-        {
-        }
+        public void OnBotSteamCallbacksInit(Bot bot, CallbackManager callbackManager){ }
 
         public IReadOnlyCollection<ClientMsgHandler> OnBotSteamHandlersInit(Bot bot)
         {

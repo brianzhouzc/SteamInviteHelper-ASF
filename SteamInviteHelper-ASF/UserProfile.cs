@@ -1,14 +1,7 @@
 ﻿using ArchiSteamFarm;
 using SteamKit2;
-using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Globalization;
-using System.Net.Http;
 using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace SteamInviteHelper_ASF
 {

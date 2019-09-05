@@ -4,7 +4,6 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Data;
 using System.IO;
 using System.Text;
 using System.Threading;
@@ -13,10 +12,10 @@ namespace SteamInviteHelper_ASF
 {
     class Config
     {
+        private const string defaultConfig = @"{""SteamInviteHelper"":{""Enabled"":true,""ActionPriority"":[""block"",""ignore"",""add"",""none""],""PrivateProfile"":{""action"":""block""},""SteamRepScammer"":{""action"":""block""},""SteamLevel"":[{""condition"":""default"",""value"":-1,""action"":""none""},{""condition"":""less_than"",""value"":1,""action"":""block""},{""condition"":""less_than"",""value"":5,""action"":""ignore""}],""VACBanned"":[{""condition"":""default"",""value"":-1,""action"":""none""},{""condition"":""more_than"",""value"":1,""action"":""ignore""}],""GameBanned"":[{""condition"":""default"",""value"":-1,""action"":""none""},{""condition"":""more_than"",""value"":1,""action"":""ignore""}],""DaysSinceLastBan"":[{""condition"":""default"",""value"":-1,""action"":""none""},{""condition"":""less_than"",""value"":90,""action"":""ignore""}],""CommunityBanned"":{""action"":""none""},""EconomyBanned"":{""action"":""none""},""ProfileName"":[{""condition"":""default"",""value"":"""",""action"":""none""},{""condition"":""contain"",""value"":""shittygamblingsite.com"",""action"":""ignore""}]}}";
         public static ConcurrentDictionary<Bot, Config> FriendInviteConfigs = new ConcurrentDictionary<Bot, Config>();
-
+        public bool Enabled { get; set; }
         public List<string> ActionPriority { get; set; }
-
         public string PrivateProfile { get; set; }
         public string SteamRepScammer { get; set; }
         public List<ConfigItem> SteamLevel { get; set; }
@@ -26,9 +25,6 @@ namespace SteamInviteHelper_ASF
         public string CommunityBanned { get; set; }
         public string EconomyBanned { get; set; }
         public List<ConfigItem> ProfileName { get; set; }
-
-        public bool Debug { get; set; }
-
 
         public Config(Bot bot)
         {
@@ -41,14 +37,15 @@ namespace SteamInviteHelper_ASF
                 
                 if (!o.ContainsKey("SteamInviteHelper"))
                 {
-                    JObject defaultconfig = JObject.Parse(@"{""SteamInviteHelper"":{""ActionPriority"":[""block"",""ignore"",""add"",""none""],""PrivateProfile"":{""action"":""block""},""SteamRepScammer"":{""action"":""block""},""SteamLevel"":[{""condition"":""default"",""value"":-1,""action"":""none""},{""condition"":""less_than"",""value"":1,""action"":""block""},{""condition"":""less_than"",""value"":5,""action"":""ignore""}],""VACBanned"":[{""condition"":""default"",""value"":-1,""action"":""none""},{""condition"":""more_than"",""value"":1,""action"":""ignore""}],""GameBanned"":[{""condition"":""default"",""value"":-1,""action"":""none""},{""condition"":""more_than"",""value"":1,""action"":""ignore""}],""DaysSinceLastBan"":[{""condition"":""default"",""value"":-1,""action"":""none""},{""condition"":""less_than"",""value"":90,""action"":""ignore""}],""CommunityBanned"":{""action"":""none""},""EconomyBanned"":{""action"":""none""},""ProfileName"":[{""condition"":""default"",""value"":"""",""action"":""none""},{""condition"":""contain"",""value"":""shittygamblingsite.com"",""action"":""ignore""}]}}");
-                    o.Merge(defaultconfig);
+                    JObject defaultConfigJson = JObject.Parse(defaultConfig);
+                    o.Merge(defaultConfigJson);
 
                     File.WriteAllText(configpath, o.ToString());
                     Logger.LogWarning("Config not found! Loading default config...");
                     Logger.LogWarning("Saved default config, please review and edit your bot's config!");
                 }
 
+                this.Enabled = (Boolean)o.SelectToken("SteamInviteHelper.Enabled");
 
                 this.ActionPriority = JsonConvert.DeserializeObject<List<string>>(o.SelectToken("SteamInviteHelper.ActionPriority").ToString());
 
@@ -61,7 +58,6 @@ namespace SteamInviteHelper_ASF
                 {
                     SteamLevel.Add(JsonConvert.DeserializeObject<ConfigItem>(token.ToString()));
                 }
-                //Console.WriteLine(SteamLevel[0].ToString());
 
                 this.VacBanned = new List<ConfigItem>();
                 IEnumerable<JToken> vacbannedtockens = o.SelectTokens("SteamInviteHelper.VACBanned[*]");
@@ -94,15 +90,6 @@ namespace SteamInviteHelper_ASF
                 {
                     ProfileName.Add(JsonConvert.DeserializeObject<ConfigItem>(token.ToString()));
                 }
-
-                try
-                {
-                    this.Debug = (Boolean)o.SelectToken("SteamInviteHelper.debug");
-                }
-                catch
-                {
-                    this.Debug = false;
-                }
             }
             catch (Exception e)
             {
@@ -112,7 +99,6 @@ namespace SteamInviteHelper_ASF
                 Thread.Sleep(5000);
                 Environment.Exit(1);
             }
-
         }
 
         public override string ToString()

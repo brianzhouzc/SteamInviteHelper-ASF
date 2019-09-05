@@ -1,9 +1,7 @@
 ﻿using ArchiSteamFarm;
 using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.Net.Http;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -12,7 +10,6 @@ namespace SteamInviteHelper_ASF
     class WebRequestsHelper
     {
         private static string SteamCommunityURL => ArchiWebHandler.SteamCommunityURL;
-
         private static readonly HttpClient client = new HttpClient();
 
         public static async void getApiKeyAsync(Bot bot)
