@@ -9,16 +9,7 @@ namespace SteamInviteHelper_ASF
 {
     class WebRequestsHelper
     {
-        private static string SteamCommunityURL => ArchiWebHandler.SteamCommunityURL;
         private static readonly HttpClient client = new HttpClient();
-
-        public static async void getApiKeyAsync(Bot bot)
-        {
-            const string request = "/dev/apikey";
-            var html = await bot.ArchiWebHandler.UrlGetToHtmlDocumentWithSession(SteamCommunityURL, request);
-            string key = html.GetElementbyId("bodyContents_ex").ChildNodes[3].InnerText.Replace("Key: ", "");
-            UserProfile.WebAPIKeys.GetOrAdd(bot, key);
-        }
 
         public static async Task<bool> StreamRepIsScammer(ulong steam64ID)
         {

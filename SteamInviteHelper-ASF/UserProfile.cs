@@ -2,6 +2,7 @@
 using SteamKit2;
 using System.Collections.Concurrent;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace SteamInviteHelper_ASF
 {
@@ -46,43 +47,47 @@ namespace SteamInviteHelper_ASF
 
         public string userProfileURL { get; set; }
 
-        public UserProfile(ulong steamId64, Bot bot)
+        private UserProfile(){}
+        async public static Task<UserProfile> BuildUserProfile(ulong steamId64, Bot bot)
         {
-            this.steamId64 = steamId64;
+            UserProfile userProfile = new UserProfile();
 
-            string apikey = WebAPIKeys.GetOrAdd(bot, "");
-            using (dynamic steamUser = WebAPI.GetInterface("ISteamUser", apikey))
+            (bool success, string steamApiKey) = await bot.ArchiWebHandler.CachedApiKey.GetValue().ConfigureAwait(false);
+
+            if (!success)
+                return null;
+
+            userProfile.steamId64 = steamId64;
+
+            using (dynamic steamUser = WebAPI.GetInterface("ISteamUser", steamApiKey))
             {
-                KeyValue kvSummaries = steamUser.GetPlayerSummaries(steamids: steamId64.ToString());
-                var userSummaries = kvSummaries["players"]["player"].Children[0];
+                KeyValue kvUserSummaries = steamUser.GetPlayerSummaries(steamids: steamId64.ToString())["players"]["player"].Children[0];
+                userProfile.profileUrl = kvUserSummaries["profileurl"].AsString();
+                userProfile.communityVisibilityState = kvUserSummaries["communityvisibilitystate"].AsInteger();
+                userProfile.profileState = kvUserSummaries["profilestate"].AsInteger();
+                userProfile.personaName = kvUserSummaries["personaname"].AsString();
+                userProfile.commentPermission = kvUserSummaries["commentpermission"].AsInteger();
+                userProfile.personaState = kvUserSummaries["personaState"].AsInteger();
+                userProfile.userProfileURL = kvUserSummaries["profileurl"].AsString();
 
-                profileUrl = userSummaries["profileurl"].AsString();
-                communityVisibilityState = userSummaries["communityvisibilitystate"].AsInteger();
-                profileState = userSummaries["profilestate"].AsInteger();
-                personaName = userSummaries["personaname"].AsString();
-                commentPermission = userSummaries["commentpermission"].AsInteger();
-                personaState = userSummaries["personaState"].AsInteger();
-                userProfileURL = userSummaries["profileurl"].AsString();
-
-                KeyValue kvBans = steamUser.GetPlayerBans(steamids: steamId64.ToString());
-                var userBans = kvBans["players"].Children[0];
-
-                communityBanned = userBans["CommunityBanned"].AsBoolean();
-                vacBanned = userBans["VACBanned"].AsBoolean();
-                numberOfVACBans = userBans["NumberOfVACBans"].AsInteger();
-                numberOfGamebans = userBans["NumberOfGameBans"].AsInteger();
-                gameBanned = numberOfGamebans > 0;
-                daysSinceLastBan = userBans["DaysSinceLastBan"].AsInteger();
-                economyBan = userBans["EconomyBan"].AsString();
+                KeyValue kvUserBans = steamUser.GetPlayerBans(steamids: steamId64.ToString())["players"].Children[0];
+                userProfile.communityBanned = kvUserBans["CommunityBanned"].AsBoolean();
+                userProfile.vacBanned = kvUserBans["VACBanned"].AsBoolean();
+                userProfile.numberOfVACBans = kvUserBans["NumberOfVACBans"].AsInteger();
+                userProfile.numberOfGamebans = kvUserBans["NumberOfGameBans"].AsInteger();
+                userProfile.gameBanned = userProfile.numberOfGamebans > 0;
+                userProfile.daysSinceLastBan = kvUserBans["DaysSinceLastBan"].AsInteger();
+                userProfile.economyBan = kvUserBans["EconomyBan"].AsString();
             }
 
-            using (dynamic steamUser = WebAPI.GetInterface("IPlayerService", apikey))
+            using (dynamic steamUser = WebAPI.GetInterface("IPlayerService", steamApiKey))
             {
-                KeyValue kvServices = steamUser.GetSteamLevel(steamid: steamId64.ToString());
-                steamLevel = kvServices["player_level"].AsInteger();
+                KeyValue kvPlayerServices = steamUser.GetSteamLevel(steamid: steamId64.ToString());
+                userProfile.steamLevel = kvPlayerServices["player_level"].AsInteger();
             }
+
+            return userProfile;
         }
-
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();

@@ -57,7 +57,6 @@ namespace SteamInviteHelper_ASF
 
         public void OnBotLoggedOn(Bot bot)
         {
-            WebRequestsHelper.getApiKeyAsync(bot);
             Config.FriendInviteConfigs.TryAdd(bot, new Config(bot));
         }
 

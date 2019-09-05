@@ -12,7 +12,7 @@ namespace SteamInviteHelper_ASF
         public async void processFriendRequest(SteamID SteamID, Bot bot)
         {
             SteamFriends steamFriends = Client.GetHandler<SteamFriends>();
-            UserProfile userProfile = new UserProfile(SteamID.ConvertToUInt64(), bot);
+            UserProfile userProfile = await UserProfile.BuildUserProfile(SteamID.ConvertToUInt64(), bot);
 
             List<Action> actions = new List<Action>();
 
