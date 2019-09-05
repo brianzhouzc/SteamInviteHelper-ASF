@@ -31,11 +31,11 @@ namespace SteamInviteHelper_ASF
             }
         }
 
-        public Task<string> OnBotCommand(Bot bot, ulong steamID, string message, string[] args){ return null; }
+        public Task<string> OnBotCommand(Bot bot, ulong steamID, string message, string[] args) { return null; }
 
-        public void OnBotDestroy(Bot bot){ }
+        public void OnBotDestroy(Bot bot) { }
 
-        public void OnBotDisconnected(Bot bot, EResult reason){ }
+        public void OnBotDisconnected(Bot bot, EResult reason) { }
 
         public Task<bool> OnBotFriendRequest(Bot bot, ulong steamID)
         {
@@ -43,12 +43,9 @@ namespace SteamInviteHelper_ASF
             return Task.FromResult(false);
         }
 
-        public void OnBotInit(Bot bot){ }
+        public void OnBotInit(Bot bot) { }
 
-        public async void OnBotInitModules(Bot bot, IReadOnlyDictionary<string, JToken> additionalConfigProperties = null)
-        {
-            await bot.Actions.Pause(true).ConfigureAwait(false);
-        }
+        public void OnBotInitModules(Bot bot, IReadOnlyDictionary<string, JToken> additionalConfigProperties = null) { }
 
         public void OnBotLoggedOn(Bot bot)
         {
@@ -60,7 +57,7 @@ namespace SteamInviteHelper_ASF
             return null;
         }
 
-        public void OnBotSteamCallbacksInit(Bot bot, CallbackManager callbackManager){ }
+        public void OnBotSteamCallbacksInit(Bot bot, CallbackManager callbackManager) { }
 
         public IReadOnlyCollection<ClientMsgHandler> OnBotSteamHandlersInit(Bot bot)
         {

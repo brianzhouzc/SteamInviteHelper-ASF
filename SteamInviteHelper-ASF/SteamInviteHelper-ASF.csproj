@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp2.2</TargetFramework>
     <RootNamespace>SteamInviteHelper_ASF</RootNamespace>
+    <AssemblyVersion>1.0.1</AssemblyVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -18,7 +19,7 @@
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="copy /Y &quot;$(TargetPath)&quot; &quot;$(SolutionDir)ArchiSteamFarm\ArchiSteamFarm\bin\Release\netcoreapp2.2\plugins&quot;" />
+    <Exec Command="copy /Y &quot;$(TargetPath)&quot; &quot;$(SolutionDir)ArchiSteamFarm\ArchiSteamFarm\bin\Release\netcoreapp2.2\plugins\SteamInviteHelper-ASF&quot;" />
   </Target>
 
 </Project>
