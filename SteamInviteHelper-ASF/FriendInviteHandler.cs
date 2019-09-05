@@ -13,35 +13,36 @@ namespace SteamInviteHelper_ASF
         {
             SteamFriends steamFriends = Client.GetHandler<SteamFriends>();
             UserProfile userProfile = await UserProfile.BuildUserProfile(SteamID.ConvertToUInt64(), bot);
+            Logger.LogDebug("[PROFILE DETAILS]: " + userProfile.ToString());
 
             List<Action> actions = new List<Action>();
 
             actions.Add(processPrivateProfile(userProfile, bot));
-            Logger.LogDebug("[ACTION PRIVATE PROFILE]: " + processPrivateProfile(userProfile, bot));
+            Logger.LogDebug("[ACTION PRIVATE PROFILE]: " + processPrivateProfile(userProfile, bot).action);
 
             actions.Add(await processSteamRepScammerAsync(userProfile, bot));
-            Logger.LogDebug("[ACTION STAEMREP SCAMMER]: " + await processSteamRepScammerAsync(userProfile, bot));
+            Logger.LogDebug("[ACTION STAEMREP SCAMMER]: " + (await processSteamRepScammerAsync(userProfile, bot)).action);
 
             actions.Add(processSteamLevel(userProfile, bot));
-            Logger.LogDebug("[ACTION STEAM LEVEL]: " + processSteamLevel(userProfile, bot));
+            Logger.LogDebug("[ACTION STEAM LEVEL]: " + processSteamLevel(userProfile, bot).action);
 
             actions.Add(processVACBanned(userProfile, bot));
-            Logger.LogDebug("[ACTION VAC BANNED]: " + processVACBanned(userProfile, bot));
+            Logger.LogDebug("[ACTION VAC BANNED]: " + processVACBanned(userProfile, bot).action);
 
             actions.Add(processGameBanned(userProfile, bot));
-            Logger.LogDebug("[ACTION GAME BANNED]: " + processGameBanned(userProfile, bot));
+            Logger.LogDebug("[ACTION GAME BANNED]: " + processGameBanned(userProfile, bot).action);
 
             actions.Add(processDaysSinceLastBan(userProfile, bot));
-            Logger.LogDebug("[ACTION DAYS SINCE LAST BAN]: " + processDaysSinceLastBan(userProfile, bot));
+            Logger.LogDebug("[ACTION DAYS SINCE LAST BAN]: " + processDaysSinceLastBan(userProfile, bot).action);
 
             actions.Add(processCommunityBanned(userProfile, bot));
-            Logger.LogDebug("[ACTION COMMUNITY BANNED]: " + processCommunityBanned(userProfile, bot));
+            Logger.LogDebug("[ACTION COMMUNITY BANNED]: " + processCommunityBanned(userProfile, bot).action);
 
             actions.Add(processEconomyBanned(userProfile, bot));
-            Logger.LogDebug("[ACTION ECONOMY BANNED]: " + processEconomyBanned(userProfile, bot));
+            Logger.LogDebug("[ACTION ECONOMY BANNED]: " + processEconomyBanned(userProfile, bot).action);
 
             actions.Add(processProfileName(userProfile, bot));
-            Logger.LogDebug("[ACTION PROFILE NAME]: " + processProfileName(userProfile, bot));
+            Logger.LogDebug("[ACTION PROFILE NAME]: " + processProfileName(userProfile, bot).action);
 
             List<string> actionpriority = Config.FriendInviteConfigs.GetOrAdd(bot, new Config(bot)).ActionPriority;
 
