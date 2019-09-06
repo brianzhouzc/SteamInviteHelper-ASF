@@ -44,7 +44,7 @@ namespace SteamInviteHelper_ASF
             {
                 friendInviteHandler.processFriendRequest(steamID, bot);
             }
-            return true;
+            return false;
         }
 
         public void OnBotInit(Bot bot) { }

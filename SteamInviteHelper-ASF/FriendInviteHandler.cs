@@ -65,8 +65,6 @@ namespace SteamInviteHelper_ASF
                         case "add":
                             steamFriends.AddFriend(SteamID);
                             break;
-                        case "none":
-                            break;
                     }
 
                     Logger.LogInfo("New pending invite from {0}", userProfile.personaName);
