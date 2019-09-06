@@ -11,7 +11,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="SteamKit2" Version="2.2.0" />
+    <PackageReference Include="System.Composition.AttributedModel" Version="*" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="SteamKit2" Version="*" />
   </ItemGroup>
 
   <ItemGroup>

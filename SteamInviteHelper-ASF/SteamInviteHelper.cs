@@ -13,9 +13,7 @@ using System.Threading.Tasks;
 namespace SteamInviteHelper_ASF
 {
     [Export(typeof(IPlugin))]
-
     internal sealed class SteamInviteHelper : IASF, IBot, IBotConnection, IBotFriendRequest, IBotModules, IBotSteamClient
-
     {
         private static ConcurrentDictionary<Bot, FriendInviteHandler> FriendInviteHandlers = new ConcurrentDictionary<Bot, FriendInviteHandler>();
 
