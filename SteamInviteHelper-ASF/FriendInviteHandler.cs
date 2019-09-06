@@ -44,7 +44,8 @@ namespace SteamInviteHelper_ASF
             actions.Add(processProfileName(userProfile, bot));
             Logger.LogDebug("[ACTION PROFILE NAME]: " + processProfileName(userProfile, bot).action);
 
-            List<string> actionpriority = Config.FriendInviteConfigs.GetOrAdd(bot, new Config(bot)).ActionPriority;
+            Config.FriendInviteConfigs.TryGetValue(bot, out Config config);
+            List<string> actionpriority = config.ActionPriority;
 
             foreach (string action_string in actionpriority)
             {
@@ -78,7 +79,7 @@ namespace SteamInviteHelper_ASF
 
         private static Action processPrivateProfile(UserProfile userProfile, Bot bot)
         {
-            Config config = Config.FriendInviteConfigs.GetOrAdd(bot, new Config(bot));
+            Config.FriendInviteConfigs.TryGetValue(bot, out Config config);
             if (userProfile.communityVisibilityState == 1)
             {
                 return new Action(config.PrivateProfile, "Private Profile");
@@ -97,14 +98,15 @@ namespace SteamInviteHelper_ASF
 
             if (result.Contains("SCAMMER"))
             {
-                return new Action(Config.FriendInviteConfigs.GetOrAdd(bot, new Config(bot)).SteamRepScammer, "SteamRep scammer");
+                Config.FriendInviteConfigs.TryGetValue(bot, out Config config);
+                return new Action(config.SteamRepScammer, "SteamRep scammer");
             }
             return new Action("none");
         }
 
         private static Action processSteamLevel(UserProfile userProfile, Bot bot)
         {
-            Config config = Config.FriendInviteConfigs.GetOrAdd(bot, new Config(bot));
+            Config.FriendInviteConfigs.TryGetValue(bot, out Config config);
             string defaultAction = "none";
 
             foreach (ConfigItem item in config.SteamLevel)
@@ -134,7 +136,7 @@ namespace SteamInviteHelper_ASF
 
         private static Action processVACBanned(UserProfile userProfile, Bot bot)
         {
-            Config config = Config.FriendInviteConfigs.GetOrAdd(bot, new Config(bot));
+            Config.FriendInviteConfigs.TryGetValue(bot, out Config config);
             string defaultAction = "none";
 
             foreach (ConfigItem item in config.VacBanned)
@@ -164,7 +166,7 @@ namespace SteamInviteHelper_ASF
 
         private static Action processGameBanned(UserProfile userProfile, Bot bot)
         {
-            Config config = Config.FriendInviteConfigs.GetOrAdd(bot, new Config(bot));
+            Config.FriendInviteConfigs.TryGetValue(bot, out Config config);
             string defaultAction = "none";
 
             foreach (ConfigItem item in config.GameBanned)
@@ -196,7 +198,7 @@ namespace SteamInviteHelper_ASF
         {
             if (userProfile.vacBanned || userProfile.gameBanned)
             {
-                Config config = Config.FriendInviteConfigs.GetOrAdd(bot, new Config(bot));
+                Config.FriendInviteConfigs.TryGetValue(bot, out Config config);
                 string defaultAction = "none";
 
                 foreach (ConfigItem item in config.DaysSinceLastBan)
@@ -231,7 +233,7 @@ namespace SteamInviteHelper_ASF
 
         private static Action processCommunityBanned(UserProfile userProfile, Bot bot)
         {
-            Config config = Config.FriendInviteConfigs.GetOrAdd(bot, new Config(bot));
+            Config.FriendInviteConfigs.TryGetValue(bot, out Config config);
             if (userProfile.communityBanned)
             {
                 return new Action(config.CommunityBanned, "Community banned");
@@ -244,7 +246,7 @@ namespace SteamInviteHelper_ASF
 
         private static Action processEconomyBanned(UserProfile userProfile, Bot bot)
         {
-            Config config = Config.FriendInviteConfigs.GetOrAdd(bot, new Config(bot));
+            Config.FriendInviteConfigs.TryGetValue(bot, out Config config);
             if (!userProfile.economyBan.Equals("none"))
             {
                 return new Action(config.EconomyBanned, "Economy banned");
@@ -257,7 +259,7 @@ namespace SteamInviteHelper_ASF
 
         private static Action processProfileName(UserProfile userProfile, Bot bot)
         {
-            Config config = Config.FriendInviteConfigs.GetOrAdd(bot, new Config(bot));
+            Config.FriendInviteConfigs.TryGetValue(bot, out Config config);
             string defaultAction = "none";
 
             foreach (ConfigItem item in config.ProfileName)

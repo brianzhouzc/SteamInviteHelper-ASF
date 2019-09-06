@@ -38,6 +38,21 @@ namespace SteamInviteHelper_ASF
             ASF.ArchiLogger.LogGenericWarning(sb.ToString());
         }
 
+        public static void LogError(params string[] arguments)
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.Append("[SIH] ");
+            if (arguments.Length > 1)
+            {
+                sb.AppendFormat(arguments[0], arguments.Skip(1).ToArray());
+            }
+            else
+            {
+                sb.Append(arguments[0]);
+            }
+            ASF.ArchiLogger.LogGenericError(sb.ToString());
+        }
+
         public static void LogDebug(params string[] arguments)
         {
             if (!ASF.GlobalConfig.Debug)

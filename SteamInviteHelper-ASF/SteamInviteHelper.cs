@@ -23,31 +23,52 @@ namespace SteamInviteHelper_ASF
 
         public Version Version => typeof(SteamInviteHelper).Assembly.GetName().Version;
 
-        public void OnASFInit(IReadOnlyDictionary<string, JToken> additionalConfigProperties = null)
-        {
-            if (additionalConfigProperties == null)
-            {
-                return;
-            }
-        }
+        public void OnASFInit(IReadOnlyDictionary<string, JToken> additionalConfigProperties = null) { }
 
-        public void OnBotDestroy(Bot bot) { }
+        public void OnBotDestroy(Bot bot)
+        {
+            FriendInviteHandlers.TryRemove(bot, out FriendInviteHandler friendInviteHandler);
+            Config.FriendInviteConfigs.TryRemove(bot, out Config config);
+        }
 
         public void OnBotDisconnected(Bot bot, EResult reason) { }
 
         public Task<bool> OnBotFriendRequest(Bot bot, ulong steamID)
         {
-            FriendInviteHandlers.GetOrAdd(bot, new FriendInviteHandler()).processFriendRequest(steamID, bot);
+            Thread.Sleep(2000);
+            if (FriendInviteHandlers.TryGetValue(bot, out FriendInviteHandler friendInviteHandler))
+            {
+                Logger.LogInfo(friendInviteHandler.ToString());
+                friendInviteHandler.processFriendRequest(steamID, bot);
+            }
             return Task.FromResult(false);
         }
 
         public void OnBotInit(Bot bot) { }
 
-        public void OnBotInitModules(Bot bot, IReadOnlyDictionary<string, JToken> additionalConfigProperties = null) { }
+        public void OnBotInitModules(Bot bot, IReadOnlyDictionary<string, JToken> additionalConfigProperties = null)
+        {
+            if (additionalConfigProperties != null)
+            {
+                additionalConfigProperties.TryGetValue("SteamInviteHelper", out JToken jToken);
+
+                if (Config.FriendInviteConfigs.TryGetValue(bot, out Config oldConfig))
+                {
+                    Config.FriendInviteConfigs.TryUpdate(bot, new Config(jToken), oldConfig);
+                }
+                else
+                {
+                    Config.FriendInviteConfigs.TryAdd(bot, new Config(jToken));
+                }
+            }
+            else
+            {
+                Config.AppendDefaultConfig(bot);
+            }
+        }
 
         public void OnBotLoggedOn(Bot bot)
         {
-            Config.FriendInviteConfigs.TryAdd(bot, new Config(bot));
         }
 
         public void OnBotSteamCallbacksInit(Bot bot, CallbackManager callbackManager) { }

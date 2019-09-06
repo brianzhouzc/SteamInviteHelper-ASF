@@ -14,6 +14,7 @@ namespace SteamInviteHelper_ASF
     {
         private const string defaultConfig = @"{""SteamInviteHelper"":{""Enabled"":true,""ActionPriority"":[""block"",""ignore"",""add"",""none""],""PrivateProfile"":{""action"":""block""},""SteamRepScammer"":{""action"":""block""},""SteamLevel"":[{""condition"":""default"",""value"":-1,""action"":""none""},{""condition"":""less_than"",""value"":1,""action"":""block""},{""condition"":""less_than"",""value"":5,""action"":""ignore""}],""VACBanned"":[{""condition"":""default"",""value"":-1,""action"":""none""},{""condition"":""more_than"",""value"":1,""action"":""ignore""}],""GameBanned"":[{""condition"":""default"",""value"":-1,""action"":""none""},{""condition"":""more_than"",""value"":1,""action"":""ignore""}],""DaysSinceLastBan"":[{""condition"":""default"",""value"":-1,""action"":""none""},{""condition"":""less_than"",""value"":90,""action"":""ignore""}],""CommunityBanned"":{""action"":""none""},""EconomyBanned"":{""action"":""none""},""ProfileName"":[{""condition"":""default"",""value"":"""",""action"":""none""},{""condition"":""contain"",""value"":""shittygamblingsite.com"",""action"":""ignore""}]}}";
         public static ConcurrentDictionary<Bot, Config> FriendInviteConfigs = new ConcurrentDictionary<Bot, Config>();
+
         public bool Enabled { get; set; }
         public List<string> ActionPriority { get; set; }
         public string PrivateProfile { get; set; }
@@ -26,15 +27,45 @@ namespace SteamInviteHelper_ASF
         public string EconomyBanned { get; set; }
         public List<ConfigItem> ProfileName { get; set; }
 
-        public Config(Bot bot)
+        public Config(JToken jToken)
         {
-            string configpath= "./config/" + bot.BotName + ".json";
+            try
+            {
+                this.Enabled = jToken.Value<bool>("Enabled");
+                this.ActionPriority = jToken["ActionPriority"].ToObject<List<string>>();
+
+                this.PrivateProfile = jToken.Value<JToken>("PrivateProfile").Value<string>("action");
+                this.SteamRepScammer = jToken.Value<JToken>("SteamRepScammer").Value<string>("action");
+
+                this.SteamLevel = jToken["SteamLevel"].ToObject<List<ConfigItem>>();
+                this.VacBanned = jToken["VACBanned"].ToObject<List<ConfigItem>>();
+                this.GameBanned = jToken["GameBanned"].ToObject<List<ConfigItem>>();
+                this.DaysSinceLastBan = jToken["DaysSinceLastBan"].ToObject<List<ConfigItem>>();
+
+                this.CommunityBanned = jToken.Value<JToken>("CommunityBanned").Value<string>("action");
+                this.EconomyBanned = jToken.Value<JToken>("EconomyBanned").Value<string>("action");
+
+                this.ProfileName = jToken["ProfileName"].ToObject<List<ConfigItem>>();
+            }
+            catch (Exception e)
+            {
+                Logger.LogError("Error when loading config file");
+                Logger.LogError("Exception: " + e.Message);
+                Logger.LogError("Exiting in 5 seconds...");
+                Thread.Sleep(5000);
+                Environment.Exit(1);
+            }
+        }
+
+        public static void AppendDefaultConfig(Bot bot)
+        {
+            string configpath = "./config/" + bot.BotName + ".json";
             string json = File.ReadAllText(configpath);
 
             try
             {
                 JObject o = JObject.Parse(json);
-                
+
                 if (!o.ContainsKey("SteamInviteHelper"))
                 {
                     JObject defaultConfigJson = JObject.Parse(defaultConfig);
@@ -44,58 +75,12 @@ namespace SteamInviteHelper_ASF
                     Logger.LogWarning("Config not found! Loading default config...");
                     Logger.LogWarning("Saved default config, please review and edit your bot's config!");
                 }
-
-                this.Enabled = (Boolean)o.SelectToken("SteamInviteHelper.Enabled");
-
-                this.ActionPriority = JsonConvert.DeserializeObject<List<string>>(o.SelectToken("SteamInviteHelper.ActionPriority").ToString());
-
-                this.PrivateProfile = (string)o.SelectToken("SteamInviteHelper.PrivateProfile.action");
-                this.SteamRepScammer = (string)o.SelectToken("SteamInviteHelper.SteamRepScammer.action");
-
-                this.SteamLevel = new List<ConfigItem>();
-                IEnumerable<JToken> steamleveltokens = o.SelectTokens("SteamInviteHelper.SteamLevel[*]");
-                foreach (JToken token in steamleveltokens)
-                {
-                    SteamLevel.Add(JsonConvert.DeserializeObject<ConfigItem>(token.ToString()));
-                }
-
-                this.VacBanned = new List<ConfigItem>();
-                IEnumerable<JToken> vacbannedtockens = o.SelectTokens("SteamInviteHelper.VACBanned[*]");
-                foreach (JToken token in vacbannedtockens)
-                {
-                    VacBanned.Add(JsonConvert.DeserializeObject<ConfigItem>(token.ToString()));
-                }
-
-                this.GameBanned = new List<ConfigItem>();
-                IEnumerable<JToken> gamebannedtokens = o.SelectTokens("SteamInviteHelper.GameBanned[*]");
-                foreach (JToken token in gamebannedtokens)
-                {
-                    GameBanned.Add(JsonConvert.DeserializeObject<ConfigItem>(token.ToString()));
-                }
-
-                this.DaysSinceLastBan = new List<ConfigItem>();
-                IEnumerable<JToken> dayssincelastbantokens = o.SelectTokens("SteamInviteHelper.DaysSinceLastBan[*]");
-                foreach (JToken token in dayssincelastbantokens)
-                {
-                    DaysSinceLastBan.Add(JsonConvert.DeserializeObject<ConfigItem>(token.ToString()));
-                }
-
-                this.CommunityBanned = (string)o.SelectToken("SteamInviteHelper.CommunityBanned.action");
-
-                this.EconomyBanned = (string)o.SelectToken("SteamInviteHelper.EconomyBanned.action");
-
-                this.ProfileName = new List<ConfigItem>();
-                IEnumerable<JToken> profilenametokens = o.SelectTokens("SteamInviteHelper.ProfileName[*]");
-                foreach (JToken token in profilenametokens)
-                {
-                    ProfileName.Add(JsonConvert.DeserializeObject<ConfigItem>(token.ToString()));
-                }
             }
             catch (Exception e)
             {
-                Logger.LogWarning("Error when loading config file");
-                Logger.LogWarning("Exception: " + e.Message);
-                Logger.LogWarning("Exiting in 5 seconds...");
+                Logger.LogError("Something went wrong while trying to add the default config...");
+                Logger.LogError("Exception: " + e.Message);
+                Logger.LogError("Exiting in 5 seconds...");
                 Thread.Sleep(5000);
                 Environment.Exit(1);
             }
