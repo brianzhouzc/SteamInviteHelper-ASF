@@ -38,7 +38,6 @@ namespace SteamInviteHelper_ASF
             Thread.Sleep(2000);
             if (FriendInviteHandlers.TryGetValue(bot, out FriendInviteHandler friendInviteHandler))
             {
-                Logger.LogInfo(friendInviteHandler.ToString());
                 friendInviteHandler.processFriendRequest(steamID, bot);
             }
             return Task.FromResult(false);
