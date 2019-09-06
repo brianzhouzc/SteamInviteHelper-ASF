@@ -1,5 +1,6 @@
 # SteamInviteHelper-ASF
 ![](https://raw.githubusercontent.com/1461748123/SteamInviteHelper-ASF/master/screenshot.png)
+### There seemed to be bug preventing the plugin to load correctly. If you encounter any errors please copy `ArchiSteamFarm.dll` in the same directory as the plugin's dll. You can find `ArchiSteamFarm.dll` under ArchiSteamFarm's root directory.
 ## Introduction
 This plugin allow you to set rules and actions for your incoming friend invites. The bot can automatically block, ignore or accept the incoming friend invites base on the set rules.
 
