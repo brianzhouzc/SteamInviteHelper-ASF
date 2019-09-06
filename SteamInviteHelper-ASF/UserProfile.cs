@@ -50,7 +50,7 @@ namespace SteamInviteHelper_ASF
         {
             UserProfile userProfile = new UserProfile();
 
-            (bool success, string steamApiKey) = await bot.ArchiWebHandler.CachedApiKey.GetValue().ConfigureAwait(false);
+            (bool success, string steamApiKey) = await bot.ArchiWebHandler.CachedApiKey.GetValue();
 
             if (!success)
                 return null;

@@ -16,7 +16,6 @@ namespace SteamInviteHelper_ASF
     internal sealed class SteamInviteHelper : IASF, IBot, IBotConnection, IBotFriendRequest, IBotModules, IBotSteamClient
     {
         private static ConcurrentDictionary<Bot, FriendInviteHandler> FriendInviteHandlers = new ConcurrentDictionary<Bot, FriendInviteHandler>();
-        private static List<Bot> hasProcessedFriendRequest = new List<Bot>();
 
         public string Name => nameof(SteamInviteHelper);
 
@@ -28,21 +27,15 @@ namespace SteamInviteHelper_ASF
         {
             FriendInviteHandlers.TryRemove(bot, out FriendInviteHandler friendInviteHandler);
             Config.FriendInviteConfigs.TryRemove(bot, out Config config);
-            hasProcessedFriendRequest.Remove(bot);
         }
 
         public void OnBotDisconnected(Bot bot, EResult reason) { }
 
         public async Task<bool> OnBotFriendRequest(Bot bot, ulong steamID)
         {
-            if (!hasProcessedFriendRequest.Contains(bot)) { 
-                await Task.Delay(10000); // Wait for WebAPI
-                hasProcessedFriendRequest.Add(bot);
-            }
-
             if (FriendInviteHandlers.TryGetValue(bot, out FriendInviteHandler friendInviteHandler))
             {
-                friendInviteHandler.processFriendRequest(steamID, bot);
+                await friendInviteHandler.processFriendRequest(steamID, bot);
             }
             return false;
         }
