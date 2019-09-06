@@ -9,7 +9,7 @@ namespace SteamInviteHelper_ASF
 {
     class FriendInviteHandler : ClientMsgHandler
     {
-        public async void processFriendRequest(SteamID SteamID, Bot bot)
+        public async Task<bool> processFriendRequest(SteamID SteamID, Bot bot)
         {
             SteamFriends steamFriends = Client.GetHandler<SteamFriends>();
             UserProfile userProfile = await UserProfile.BuildUserProfile(SteamID.ConvertToUInt64(), bot);
@@ -73,6 +73,7 @@ namespace SteamInviteHelper_ASF
                     Logger.LogInfo("  └─ Action: {0} | Reason: {1}", action.action.ToUpper(), action.reason);
                 }
             }
+            return true;
         }
 
         private static Action processPrivateProfile(UserProfile userProfile, Bot bot)
