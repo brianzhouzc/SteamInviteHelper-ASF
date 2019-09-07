@@ -27,7 +27,7 @@ namespace SteamInviteHelper_ASF
         public string EconomyBanned { get; set; }
         public List<ConfigItem> ProfileName { get; set; }
 
-        public Config(JToken jToken)
+        public Config(Bot bot, JToken jToken)
         {
             try
             {
@@ -54,6 +54,11 @@ namespace SteamInviteHelper_ASF
                 Logger.LogError("Exiting in 5 seconds...");
                 Thread.Sleep(5000);
                 Environment.Exit(1);
+            }
+
+            if (!Enabled)
+            {
+                Logger.LogInfo("SteamInviteHelper is disabled for bot {0}!", bot.Nickname);
             }
         }
 

@@ -33,6 +33,10 @@ namespace SteamInviteHelper_ASF
 
         public async Task<bool> OnBotFriendRequest(Bot bot, ulong steamID)
         {
+            Config.FriendInviteConfigs.TryGetValue(bot, out Config config);
+            if (!config.Enabled)
+                return false;
+
             if (FriendInviteHandlers.TryGetValue(bot, out FriendInviteHandler friendInviteHandler))
             {
                 await friendInviteHandler.processFriendRequest(steamID, bot);
@@ -50,11 +54,11 @@ namespace SteamInviteHelper_ASF
 
                 if (Config.FriendInviteConfigs.TryGetValue(bot, out Config oldConfig))
                 {
-                    Config.FriendInviteConfigs.TryUpdate(bot, new Config(jToken), oldConfig);
+                    Config.FriendInviteConfigs.TryUpdate(bot, new Config(bot, jToken), oldConfig);
                 }
                 else
                 {
-                    Config.FriendInviteConfigs.TryAdd(bot, new Config(jToken));
+                    Config.FriendInviteConfigs.TryAdd(bot, new Config(bot, jToken));
                 }
             }
             else

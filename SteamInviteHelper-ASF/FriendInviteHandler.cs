@@ -281,6 +281,20 @@ namespace SteamInviteHelper_ASF
             return new Action(defaultAction);
         }
 
+        //private static async Task<Action> processCommentedOnProfile(UserProfile userProfile, Bot bot)
+        //{
+        //    WebBrowser webBrowser = bot.ArchiWebHandler.WebBrowser;
+        //    string requesturl = @"https://steamcommunity.com/comment/Profile/render/" + bot.SteamID;
+        //    string html = (await webBrowser.UrlGetToHtmlDocument(requesturl)).Content.Text;
+        //    bool commented = html.Contains(Convert.ToString(userProfile.steamId64));
+
+        //    if (commented)
+        //    {
+
+        //    }
+        //    return html.Contains(Convert.ToString(userProfile.steamId64));
+        //}
+
         public override void HandleMsg(IPacketMsg packetMsg)
         {
         }
