@@ -43,9 +43,8 @@ namespace SteamInviteHelper_ASF
 
         public string economyBan { get; set; }
 
-        public string userProfileURL { get; set; }
-
         private UserProfile(){}
+
         async public static Task<UserProfile> BuildUserProfile(ulong steamId64, Bot bot)
         {
             UserProfile userProfile = new UserProfile();
@@ -65,7 +64,6 @@ namespace SteamInviteHelper_ASF
                 userProfile.personaName = kvUserSummaries["personaname"].AsString();
                 userProfile.commentPermission = kvUserSummaries["commentpermission"].AsInteger();
                 userProfile.personaState = kvUserSummaries["personaState"].AsInteger();
-                userProfile.userProfileURL = kvUserSummaries["profileurl"].AsString();
 
                 KeyValue kvUserBans = steamUser.GetPlayerBans(steamids: steamId64.ToString())["players"].Children[0];
                 userProfile.communityBanned = kvUserBans["CommunityBanned"].AsBoolean();

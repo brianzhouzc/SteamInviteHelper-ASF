@@ -16,6 +16,7 @@ namespace SteamInviteHelper_ASF
     internal sealed class SteamInviteHelper : IASF, IBot, IBotConnection, IBotFriendRequest, IBotModules, IBotSteamClient
     {
         private static ConcurrentDictionary<Bot, FriendInviteHandler> FriendInviteHandlers = new ConcurrentDictionary<Bot, FriendInviteHandler>();
+        public static ConcurrentDictionary<Bot, UserProfile> BotProfiles = new ConcurrentDictionary<Bot, UserProfile>();
 
         public string Name => nameof(SteamInviteHelper);
 
@@ -26,6 +27,7 @@ namespace SteamInviteHelper_ASF
         public void OnBotDestroy(Bot bot)
         {
             FriendInviteHandlers.TryRemove(bot, out FriendInviteHandler friendInviteHandler);
+            BotProfiles.TryRemove(bot, out UserProfile userProfile);
             Config.FriendInviteConfigs.TryRemove(bot, out Config config);
         }
 
@@ -67,9 +69,7 @@ namespace SteamInviteHelper_ASF
             }
         }
 
-        public void OnBotLoggedOn(Bot bot)
-        {
-        }
+        public void OnBotLoggedOn(Bot bot) { }
 
         public void OnBotSteamCallbacksInit(Bot bot, CallbackManager callbackManager) { }
 

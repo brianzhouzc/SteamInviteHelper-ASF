@@ -2,7 +2,6 @@
 using SteamKit2;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace SteamInviteHelper_ASF
@@ -69,7 +68,7 @@ namespace SteamInviteHelper_ASF
 
                     Logger.LogInfo("New pending invite from {0}", userProfile.personaName);
                     Logger.LogInfo("  ├─ SteamID: {0}", Convert.ToString(SteamID.ConvertToUInt64()));
-                    Logger.LogInfo("  ├─ Profile url: {0}", userProfile.userProfileURL);
+                    Logger.LogInfo("  ├─ Profile url: {0}", userProfile.profileUrl);
                     Logger.LogInfo("  └─ Action: {0} | Reason: {1}", action.action.ToUpper(), action.reason);
                 }
             }
@@ -281,19 +280,25 @@ namespace SteamInviteHelper_ASF
             return new Action(defaultAction);
         }
 
-        //private static async Task<Action> processCommentedOnProfile(UserProfile userProfile, Bot bot)
-        //{
-        //    WebBrowser webBrowser = bot.ArchiWebHandler.WebBrowser;
-        //    string requesturl = @"https://steamcommunity.com/comment/Profile/render/" + bot.SteamID;
-        //    string html = (await webBrowser.UrlGetToHtmlDocument(requesturl)).Content.Text;
-        //    bool commented = html.Contains(Convert.ToString(userProfile.steamId64));
+        private static async Task<Action> processCommentedOnProfile(UserProfile userProfile, Bot bot)
+        {
+            if (!SteamInviteHelper.BotProfiles.TryGetValue(bot, out UserProfile botProfile))
+            {
+                botProfile = SteamInviteHelper.BotProfiles.GetOrAdd(bot, await UserProfile.BuildUserProfile(bot.SteamID, bot));
+            }
 
-        //    if (commented)
-        //    {
+            WebBrowser webBrowser = bot.ArchiWebHandler.WebBrowser;
+            string requesturl = botProfile.profileUrl +"/allcomments";
+            string html = (await webBrowser.UrlGetToHtmlDocument(requesturl)).Content.Text;
+            bool commented = html.Contains(Convert.ToString(userProfile.steamId64));
 
-        //    }
-        //    return html.Contains(Convert.ToString(userProfile.steamId64));
-        //}
+            if (commented)
+            {
+
+            }
+            return html.Contains(Convert.ToString(userProfile.steamId64));
+
+        }
 
         public override void HandleMsg(IPacketMsg packetMsg)
         {
