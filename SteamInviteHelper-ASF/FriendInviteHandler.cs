@@ -1,7 +1,11 @@
 ﻿using ArchiSteamFarm;
+using HtmlAgilityPack;
+using Newtonsoft.Json.Linq;
 using SteamKit2;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace SteamInviteHelper_ASF
@@ -13,6 +17,8 @@ namespace SteamInviteHelper_ASF
             SteamFriends steamFriends = Client.GetHandler<SteamFriends>();
             UserProfile userProfile = await UserProfile.BuildUserProfile(SteamID.ConvertToUInt64(), bot);
             Logger.LogDebug("[PROFILE DETAILS]: " + userProfile.ToString());
+
+            await processCommentedOnProfile(userProfile, bot);
 
             List<Action> actions = new List<Action>();
 
@@ -282,22 +288,52 @@ namespace SteamInviteHelper_ASF
 
         private static async Task<Action> processCommentedOnProfile(UserProfile userProfile, Bot bot)
         {
-            if (!SteamInviteHelper.BotProfiles.TryGetValue(bot, out UserProfile botProfile))
+            WebBrowser webBrowser = ASF.WebBrowser;
+            JObject response = (await webBrowser.UrlGetToJsonObject<JObject>("https://steamcommunity.com/comment/Profile/render/" + bot.SteamID)).Content;
+
+            if (!response.GetValue("success").ToObject<bool>())
+                return new Action("none");
+
+            HtmlDocument htmlDocument = new HtmlDocument();
+            htmlDocument.LoadHtml(response.GetValue("comments_html").ToString());
+
+            List<KeyValuePair<string, string>> comments = new List<KeyValuePair<string, string>>();
+            var nodes = htmlDocument.DocumentNode.SelectNodes(@"//div[contains(@class,  'commentthread_comment') and contains(@class, 'responsive_body_text')]");
+
+            foreach (HtmlNode node in nodes)
             {
-                botProfile = SteamInviteHelper.BotProfiles.GetOrAdd(bot, await UserProfile.BuildUserProfile(bot.SteamID, bot));
+                HtmlNode authorLinkNode = node.SelectSingleNode(@".//a[contains(@class, 'hoverunderline') and contains(@class, 'commentthread_author_link')]");
+                HtmlNode commentNode = node.SelectSingleNode(@".//div[contains(@class, 'commentthread_comment_text')]");
+
+                Uri authorUri = new Uri(authorLinkNode.GetAttributeValue("href", ""));
+                string comment = commentNode.InnerText.Trim().Normalize();
+
+                string authorProfileID = authorUri.Segments[authorUri.Segments.Count() - 1].Replace(@"/", "");
+                comments.Add(new KeyValuePair<string, string>(authorProfileID, comment));
             }
 
-            WebBrowser webBrowser = bot.ArchiWebHandler.WebBrowser;
-            string requesturl = botProfile.profileUrl +"/allcomments";
-            string html = (await webBrowser.UrlGetToHtmlDocument(requesturl)).Content.Text;
-            bool commented = html.Contains(Convert.ToString(userProfile.steamId64));
+            Uri senderProfileUri = new Uri(userProfile.profileUrl);
+            string senderProfileID = senderProfileUri.Segments[senderProfileUri.Segments.Count() - 1].Replace(@"/", "");
 
-            if (commented)
+            Config.FriendInviteConfigs.TryGetValue(bot, out Config config);
+
+            var groupedData = comments.ToLookup(x => x.Key, x => x.Value);
+
+            foreach (ConfigItem item in config.Comments)
             {
+                switch (item.condition)
+                {
+                    case "commented":
+                        if (groupedData.)
+                        {
 
+                        }
+                        break;
+                    case "contain":
+                        break;
+                }
             }
-            return html.Contains(Convert.ToString(userProfile.steamId64));
-
+            return null;
         }
 
         public override void HandleMsg(IPacketMsg packetMsg)

@@ -26,6 +26,7 @@ namespace SteamInviteHelper_ASF
         public string CommunityBanned { get; set; }
         public string EconomyBanned { get; set; }
         public List<ConfigItem> ProfileName { get; set; }
+        public List<ConfigItem> Comments { get; set; }
 
         public Config(Bot bot, JToken jToken)
         {
@@ -46,6 +47,8 @@ namespace SteamInviteHelper_ASF
                 this.EconomyBanned = jToken.Value<JToken>("EconomyBanned").Value<string>("action");
 
                 this.ProfileName = jToken["ProfileName"].ToObject<List<ConfigItem>>();
+
+                this.Comments = jToken["Comments"].ToObject<List<ConfigItem>>();
             }
             catch (Exception e)
             {

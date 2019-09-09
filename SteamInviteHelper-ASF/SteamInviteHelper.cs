@@ -35,6 +35,8 @@ namespace SteamInviteHelper_ASF
 
         public async Task<bool> OnBotFriendRequest(Bot bot, ulong steamID)
         {
+            await Task.Delay(5000);
+
             Config.FriendInviteConfigs.TryGetValue(bot, out Config config);
             if (!config.Enabled)
                 return false;
