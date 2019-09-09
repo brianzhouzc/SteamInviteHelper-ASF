@@ -8,10 +8,13 @@ namespace SteamInviteHelper_ASF
 {
     class Logger
     {
-        public static void LogInfo(params string[] arguments)
+        private static string constructString(params string[] arguments)
         {
             StringBuilder sb = new StringBuilder();
             sb.Append("[SIH] ");
+            if (arguments.Length == 0)
+                return sb.ToString();
+
             if (arguments.Length > 1)
             {
                 sb.AppendFormat(arguments[0], arguments.Skip(1).ToArray());
@@ -20,55 +23,29 @@ namespace SteamInviteHelper_ASF
             {
                 sb.Append(arguments[0]);
             }
-            ASF.ArchiLogger.LogGenericInfo(sb.ToString());
+            return sb.ToString();
+        }
+
+        public static void LogInfo(params string[] arguments)
+        {
+            ASF.ArchiLogger.LogGenericInfo(constructString(arguments));
         }
 
         public static void LogWarning(params string[] arguments)
         {
-            StringBuilder sb = new StringBuilder();
-            sb.Append("[SIH] ");
-            if (arguments.Length > 1)
-            {
-                sb.AppendFormat(arguments[0], arguments.Skip(1).ToArray());
-            }
-            else
-            {
-                sb.Append(arguments[0]);
-            }
-            ASF.ArchiLogger.LogGenericWarning(sb.ToString());
+            ASF.ArchiLogger.LogGenericWarning(constructString(arguments));
         }
 
         public static void LogError(params string[] arguments)
         {
-            StringBuilder sb = new StringBuilder();
-            sb.Append("[SIH] ");
-            if (arguments.Length > 1)
-            {
-                sb.AppendFormat(arguments[0], arguments.Skip(1).ToArray());
-            }
-            else
-            {
-                sb.Append(arguments[0]);
-            }
-            ASF.ArchiLogger.LogGenericError(sb.ToString());
+            ASF.ArchiLogger.LogGenericError(constructString(arguments));
         }
 
         public static void LogDebug(params string[] arguments)
         {
             if (!ASF.GlobalConfig.Debug)
                 return;
-
-            StringBuilder sb = new StringBuilder();
-            sb.Append("[SIH] ");
-            if (arguments.Length > 1)
-            {
-                sb.AppendFormat(arguments[0], arguments.Skip(1).ToArray());
-            }
-            else
-            {
-                sb.Append(arguments[0]);
-            }
-            ASF.ArchiLogger.LogGenericDebug(sb.ToString());
+            ASF.ArchiLogger.LogGenericDebug(constructString(arguments));
         }
     }
 }
